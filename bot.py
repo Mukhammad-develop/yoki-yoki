@@ -5,7 +5,7 @@ import mss
 import pyautogui
 from ultralytics import YOLO
 
-model = YOLO('trained_model/best.pt')
+model = YOLO('trained_model/best-simulation.pt')
 
 sct = mss.mss()
 game_area = {"top": 0, "left": 0, "width": 2560, "height": 1440}  # Define the game screen area
