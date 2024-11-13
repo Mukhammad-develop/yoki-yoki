@@ -31,6 +31,9 @@ def detect_objects(img):
             character = xyxy
     return blocks, character
 
+import time
+import pyautogui
+
 def play_game(blocks, character):
     if character:
         character_x = (character[0] + character[2]) / 2
@@ -50,11 +53,9 @@ def play_game(blocks, character):
         if closest_block:
             block_x = (closest_block[0] + closest_block[2]) / 2
             
-            # Smoothly move the cursor to hover over the target x position of the closest block
-            pyautogui.moveTo(block_x, character_y)  # Adjust duration for speed
-
-            # Short delay to allow the character to jump when it reaches the block
-
+            # Move the cursor horizontally only to avoid accidental tapping or clicking
+            current_mouse_x, current_mouse_y = pyautogui.position()
+            pyautogui.moveTo(block_x, current_mouse_y)  # Only move horizontally to avoid clicking
 
 while True:
     screen = capture_screen()
