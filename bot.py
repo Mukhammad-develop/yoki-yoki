@@ -8,7 +8,7 @@ from ultralytics import YOLO
 model = YOLO('trained_model/best.pt')
 
 sct = mss.mss()
-game_area = {"top": 100, "left": 100, "width": 800, "height": 600}  # Define the game screen area
+game_area = {"top": 0, "left": 0, "width": 2560, "height": 1440}  # Define the game screen area
 
 def capture_screen():
     screenshot = sct.grab(game_area)
