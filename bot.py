@@ -72,16 +72,25 @@ def play_game(screen):
             
             # Define x-coordinates for each letter button (this depends on screen location of each letter)
             letter_x_coords = {
-                'S': 56,  # Replace with actual x-coordinate for 'S'
-                'A': 190,  # Replace with actual x-coordinate for 'A'
-                'Z': 294,  # Replace with actual x-coordinate for 'Z'
-                'X': 416,  # Replace with actual x-coordinate for 'X'
-                'C': 538   # Replace with actual x-coordinate for 'C'
+                'S': 100,  # Replace with actual x-coordinate for 'S'
+                'A': 200,  # Replace with actual x-coordinate for 'A'
+                'Z': 300,  # Replace with actual x-coordinate for 'Z'
+                'X': 400,  # Replace with actual x-coordinate for 'X'
+                'C': 500   # Replace with actual x-coordinate for 'C'
             }
 
-            # Click the nearest button's x and y coordinates
-            pyautogui.click(letter_x_coords[letter], y_coord)
-
+            # Check if the x-coordinate is defined in letter_x_coords
+            if letter in letter_x_coords:
+                # Click the nearest button's x and y coordinates
+                pyautogui.click(letter_x_coords[letter], y_coord)
+                time.sleep(0.1)  # Add a small delay to avoid rapid clicking
+            else:
+                print(f"Error: X-coordinate for button '{letter}' not defined.")
+        else:
+            print("No button detected near the character.")
+    else:
+        print("Character not detected.")
+        
 while True:
     screen = capture_screen()
     blocks, character = detect_objects(screen)
