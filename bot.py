@@ -31,7 +31,6 @@ def detect_objects(img):
             character = xyxy
     return blocks, character
 
-import time
 import pyautogui
 
 def play_game(blocks, character):
