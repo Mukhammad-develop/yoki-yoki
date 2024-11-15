@@ -16,6 +16,9 @@ def capture_screen():
     img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
     return img
 
+# Initialize previous character position to detect movement direction
+previous_character_y = None
+
 def detect_objects(img):
     results = model(img)
     detections = results[0].boxes  # Access detections
@@ -47,13 +50,27 @@ def detect_objects(img):
 
     return buttons, blocks, character
 
-def find_nearest_button(buttons, character_y):
+def find_nearest_block_below(character_y, blocks):
+    nearest_block_y = None
+    min_distance = float('inf')
+
+    # Find the closest block below the character
+    for block_y in blocks:
+        if block_y > character_y:  # Only consider blocks below the character
+            distance = block_y - character_y
+            if distance < min_distance:
+                min_distance = distance
+                nearest_block_y = block_y
+
+    return nearest_block_y
+
+def find_nearest_button(buttons, block_y):
     nearest_button = None
     min_distance = float('inf')
     
     for letter, y_coords in buttons.items():
         for y in y_coords:
-            distance = abs(character_y - y)
+            distance = abs(block_y - y)
             if distance < min_distance:
                 min_distance = distance
                 nearest_button = (letter, y)
@@ -61,35 +78,43 @@ def find_nearest_button(buttons, character_y):
     return nearest_button
 
 def play_game(screen):
+    global previous_character_y
+    
+    # Detect objects in the current frame
     buttons, blocks, character_y = detect_objects(screen)
 
-    if character_y is not None:
-        nearest_button = find_nearest_button(buttons, character_y)
-        
-        if nearest_button:
-            letter, y_coord = nearest_button
-            print(f"Clicking on letter: {letter} at y: {y_coord}")
-            
-            # Define x-coordinates for each letter button (this depends on screen location of each letter)
-            letter_x_coords = {
-                'S': 100,  # Replace with actual x-coordinate for 'S'
-                'A': 200,  # Replace with actual x-coordinate for 'A'
-                'Z': 300,  # Replace with actual x-coordinate for 'Z'
-                'X': 400,  # Replace with actual x-coordinate for 'X'
-                'C': 500   # Replace with actual x-coordinate for 'C'
-            }
+    # Check if we have a valid character position
+    if character_y is not None and previous_character_y is not None:
+        # Determine if the character is moving down
+        is_moving_down = character_y > previous_character_y
 
-            # Check if the x-coordinate is defined in letter_x_coords
-            if letter in letter_x_coords:
-                # Click the nearest button's x and y coordinates
-                pyautogui.click(letter_x_coords[letter], y_coord)
-                time.sleep(0.1)  # Add a small delay to avoid rapid clicking
-            else:
-                print(f"Error: X-coordinate for button '{letter}' not defined.")
-        else:
-            print("No button detected near the character.")
-    else:
-        print("Character not detected.")
+        if is_moving_down:
+            # Find the nearest block below the character
+            nearest_block_y = find_nearest_block_below(character_y, blocks)
+
+            if nearest_block_y is not None:
+                # Find the nearest button associated with the detected block
+                nearest_button = find_nearest_button(buttons, nearest_block_y)
+
+                if nearest_button:
+                    letter, button_y = nearest_button
+                    print(f"Clicking on letter: {letter} at y: {button_y}")
+
+                    # Define x-coordinates for each letter button
+                    letter_x_coords = {
+                        'S': 56,  # Replace with actual x-coordinate for 'S'
+                        'A': 190,  # Replace with actual x-coordinate for 'A'
+                        'Z': 294,  # Replace with actual x-coordinate for 'Z'
+                        'X': 416,  # Replace with actual x-coordinate for 'X'
+                        'C': 538   # Replace with actual x-coordinate for 'C'
+                    }
+
+                    # Simulate a click on the nearest button
+                    pyautogui.click(letter_x_coords[letter], button_y)
+
+    # Update the previous character y-coordinate for the next frame
+    previous_character_y = character_y
+
         
 while True:
     screen = capture_screen()
