@@ -26,15 +26,16 @@ def play_game():
         blocks = []
 
         for result in results:
-            for obj in result.xyxy:
-                label = int(obj[5])
-                x1, y1, x2, y2 = map(int, obj[:4])
-                center_x, center_y = (x1 + x2) // 2, (y1 + y2) // 2
+            if result.boxes is not None:
+                for box in result.boxes:
+                    x1, y1, x2, y2 = map(int, box.xyxy[0])  # Extract bounding box coordinates
+                    center_x, center_y = (x1 + x2) // 2, (y1 + y2) // 2
+                    label = int(box.cls[0])  # Get the class ID
 
-                if label == "character":  # Replace with the label for your character in the YOLO model
-                    character = (center_x, center_y)
-                elif label == "block":  # Replace with the label for blocks
-                    blocks.append((center_x, center_y))
+                    if label == 0:  # Assuming '0' is the class ID for the character
+                        character = (center_x, center_y)
+                    elif label == 1:  # Assuming '1' is the class ID for the blocks
+                        blocks.append((center_x, center_y))
 
         # Ensure both character and blocks are detected
         if character and blocks:
