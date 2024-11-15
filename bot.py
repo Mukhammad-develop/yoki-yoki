@@ -5,7 +5,7 @@ import mss
 import pyautogui
 from ultralytics import YOLO
 
-model = YOLO('trained_model/best-simulation.pt')
+model = YOLO('yoki-yoki/trained_model/best-simulation.pt')
 
 sct = mss.mss()
 game_area = {"top": 100, "left": 100, "width": 1920, "height": 1080}  # Define the game screen area
@@ -118,5 +118,5 @@ def play_game(screen):
         
 while True:
     screen = capture_screen()
-    blocks, character = detect_objects(screen)
-    play_game(blocks, character)
+    buttons, blocks, character = detect_objects(screen)
+    play_game(screen)
