@@ -5,7 +5,7 @@ import cv2
 import time
 
 # Load YOLO model for object detection
-model = YOLO('path/to/your/yolov5/model.pt')
+model = YOLO('trained_model/best-simulation.pt')
 
 # Define screen capture function
 def capture_screen():
